@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct TinkoffInvestApp: App {
+    @StateObject var viewModel = MainViewModel(dataProvider: DataProviderImpl())
+    
     var body: some Scene {
         WindowGroup {
-            MainView(viewModel: MainViewModel(dataProvider: DataProviderImpl()))
+            MainView(viewModel: viewModel)
         }
     }
 }

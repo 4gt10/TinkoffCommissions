@@ -8,8 +8,8 @@
 import Foundation
 
 struct Account: Decodable {
-    let brokerAccountId: String
-    let brokerAccountType: String
+    let id: String
+    let name: String
 }
 
 struct AccountsPayload: Decodable {

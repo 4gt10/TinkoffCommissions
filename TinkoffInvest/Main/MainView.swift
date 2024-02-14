@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MainView: View {
-    @ObservedObject  private var viewModel: MainViewModel
+    @ObservedObject private var viewModel: MainViewModel
     
     // MARK: - Lifecycle
     init(viewModel: MainViewModel) {
@@ -20,21 +20,33 @@ struct MainView: View {
             Text("Размер коммиссий за операции:")
                 .font(.title)
                 .padding(.bottom)
-            ForEach(viewModel.commissionSummary) { commissionSummary in
-                VStack(alignment: .leading) {
-                    Text(commissionSummary.accountType)
-                        .font(.body)
-                        .fontWeight(.bold)
-                        .padding(.bottom)
-                    Text(commissionSummary.commissionSummary)
-                        .font(.body)
+            if !viewModel.commissionSummary.isEmpty {
+                ForEach(viewModel.commissionSummary) { commissionSummary in
+                    VStack(alignment: .leading) {
+                        Text(commissionSummary.accountName)
+                            .font(.body)
+                            .fontWeight(.bold)
+                            .padding(.bottom)
+                        Text(commissionSummary.commissionSummary)
+                            .font(.body)
+                    }
                 }
+                .padding(.bottom)
+            } else {
+                Text("Загрузка...")
+                    .padding(.bottom)
             }
-            .padding(.bottom)
-            Button.init(action: viewModel.update.send) {
+            Button(action: viewModel.update.send) {
                 Text("Обновить")
                     .fontWeight(.semibold)
             }
+        }
+        .alert("Ошибка", isPresented: $viewModel.isErrorAlertPresented) {
+            Button("OK") {
+                viewModel.isErrorAlertPresented = false
+            }
+        } message: {
+            Text(viewModel.error?.localizedDescription ?? "Неизвестная ошибка")
         }
         .onAppear(perform: viewModel.update.send)
     }

@@ -8,21 +8,17 @@
 import Foundation
 
 struct Operation: Decodable {
-    enum Status: String, Decodable {
-        case done = "Done"
-        case decline = "Decline"
-        case progress = "Progress"
+    struct Payment: Decodable {
+        let nano: Int
+        let currency: String
+        let units: String
     }
-    let status: Status
+    
     let operationType: String
-    let payment: Double
-    let currency: String
+    let payment: Payment
     
     var isCommission: Bool {
-        ["BrokerCommission", "ExchangeCommission", "ServiceCommission", "MarginCommission"].contains(operationType)
-    }
-    var isCompleted: Bool {
-        return status == .done
+        operationType.contains("FEE")
     }
 }
 

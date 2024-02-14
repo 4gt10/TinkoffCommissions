@@ -9,8 +9,8 @@ import Foundation
 import Combine
 
 protocol DataProvider {
-    func fetchAccounts() -> AnyPublisher<[Account], Never>
-    func fetchOperations(forAccountWithId: String) -> AnyPublisher<[Operation], Never>
+    func fetchAccounts() -> AnyPublisher<[Account], Error>
+    func fetchOperations(forAccountWithId: String) -> AnyPublisher<[Operation], Error>
 }
 
 final class DataProviderImpl {
@@ -23,20 +23,18 @@ final class DataProviderImpl {
 }
 
 extension DataProviderImpl: DataProvider {
-    func fetchAccounts() -> AnyPublisher<[Account], Never> {
+    func fetchAccounts() -> AnyPublisher<[Account], Error> {
         session.dataTaskPublisher(for: API.accounts.urlRequest)
             .map { $0.data }
-            .decode(type: Response<AccountsPayload>.self, decoder: JSONDecoder())
-            .map { $0.payload.accounts }
-            .replaceError(with: [])
+            .decode(type: AccountsPayload.self, decoder: JSONDecoder())
+            .map { $0.accounts }
             .eraseToAnyPublisher()
     }
-    func fetchOperations(forAccountWithId id: String) -> AnyPublisher<[Operation], Never> {
+    func fetchOperations(forAccountWithId id: String) -> AnyPublisher<[Operation], Error> {
         session.dataTaskPublisher(for: API.operations(accountId: id).urlRequest)
             .map { $0.data }
-            .decode(type: Response<OperationsPayload>.self, decoder: JSONDecoder())
-            .map { $0.payload.operations }
-            .replaceError(with: [])
+            .decode(type: OperationsPayload.self, decoder: JSONDecoder())
+            .map { $0.operations }
             .eraseToAnyPublisher()
     }
 }
