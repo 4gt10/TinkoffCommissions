@@ -14,8 +14,7 @@ final class MainViewModel: ObservableObject {
     
     // MARK: - Output
     @Published private(set) var commissionSummary = [CommissionSummary]()
-    @Published private(set) var error: Error?
-    @Published var isErrorAlertPresented = false
+    @Published private(set) var errorMessage: String?
     
     private let dataProvider: DataProvider
     private lazy var cancellables = Set<AnyCancellable>()
@@ -58,7 +57,7 @@ private extension MainViewModel {
             .sink { [weak self] result in
                 switch result {
                 case .failure(let error):
-                    self?.error = error
+                    self?.errorMessage = error.localizedDescription
                 default:
                     break
                 }

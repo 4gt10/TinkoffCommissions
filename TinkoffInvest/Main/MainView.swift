@@ -33,20 +33,13 @@ struct MainView: View {
                 }
                 .padding(.bottom)
             } else {
-                Text("Загрузка...")
+                Text(viewModel.errorMessage ?? "Загрузка...")
                     .padding(.bottom)
             }
             Button(action: viewModel.update.send) {
                 Text("Обновить")
                     .fontWeight(.semibold)
             }
-        }
-        .alert("Ошибка", isPresented: $viewModel.isErrorAlertPresented) {
-            Button("OK") {
-                viewModel.isErrorAlertPresented = false
-            }
-        } message: {
-            Text(viewModel.error?.localizedDescription ?? "Неизвестная ошибка")
         }
         .onAppear(perform: viewModel.update.send)
     }
